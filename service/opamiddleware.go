@@ -48,7 +48,7 @@ func OPAMiddleware(
 ) mux.MiddlewareFunc {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			if utils.Contains(routesToNotProxy, r.URL.Path) {
+			if utils.Contains(routesToNotProxy, r.URL.RequestURI()) {
 				next.ServeHTTP(w, r)
 				return
 			}
@@ -61,7 +61,7 @@ func OPAMiddleware(
 
 			path := r.URL.EscapedPath()
 			if options != nil && options.IsStandalone {
-				path = strings.Replace(r.URL.EscapedPath(), options.PathPrefixStandalone, "", -1)
+				path = strings.Replace(r.URL.EscapedPath(), options.PathPrefixStandalone, "", 1)
 			}
 
 			logger := glogrus.FromContext(r.Context())
@@ -97,7 +97,7 @@ func OPAMiddleware(
 					errorMessage = "The request doesn't match any known API"
 				}
 				if errors.Is(err, openapi.ErrNotFoundOASDefinition) {
-					statusCode = http.StatusBadRequest
+					statusCode = http.StatusNotFound
 				}
 				logger.WithFields(fields).Errorf(errorMessage)
 				utils.FailResponseWithCode(w, statusCode, technicalError, errorMessage)
