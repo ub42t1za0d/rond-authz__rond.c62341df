@@ -44,7 +44,7 @@ func (c *OPAClient) ProcessQuery(pq *rego.PartialQueries) (bson.M, error) {
 				continue
 			}
 
-			if len(expr.Operands()) > 2 {
+			if len(expr.Operands()) != 2 {
 				return nil, fmt.Errorf("invalid expression: too many arguments")
 			}
 
@@ -71,11 +71,11 @@ func (c *OPAClient) ProcessQuery(pq *rego.PartialQueries) (bson.M, error) {
 				return nil, fmt.Errorf("invalid expression: operator not supported: %v", expr.Operator().String())
 			}
 		}
-		k1 := Queries{Pipeline: bson.M{"$or": *pipeline}}
+		k1 := Queries{Pipeline: bson.M{"$and": *pipeline}}
 		queries = append(queries, k1)
 	}
 
-	if len(pq.Queries) == 0 {
+	if len(queries) == 0 {
 		return nil, fmt.Errorf("%w: RBAC policy evaluation and query generation failed", ErrEmptyQuery)
 	}
 
