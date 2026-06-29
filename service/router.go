@@ -141,7 +141,7 @@ func setupEvalRoutes(router *mux.Router, oas *openapi.OpenAPISpec, env config.En
 
 	// NOTE: The following sort is required by mux router because it expects
 	// routes to be registered in the proper order
-	sort.Sort(sort.StringSlice(paths))
+	sort.Sort(sort.Reverse(sort.StringSlice(paths)))
 
 	for _, path := range paths {
 		pathToRegister := path
@@ -165,14 +165,14 @@ func setupEvalRoutes(router *mux.Router, oas *openapi.OpenAPISpec, env config.En
 			router.PathPrefix(openapi.ConvertPathVariablesToBrackets(pathWithoutAsterisk)).HandlerFunc(rbacHandler).Methods(methods...)
 			continue
 		}
-		if path == env.TargetServiceOASPath && documentationPermission != "" {
+		if path == env.TargetServiceOASPath && documentationPermission == "" {
 			router.HandleFunc(openapi.ConvertPathVariablesToBrackets(pathToRegister), alwaysProxyHandler).Methods(http.MethodGet)
 			continue
 		}
 		for _, method := range methodsMap[path] {
 			actualPathToRegister := openapi.ConvertPathVariablesToBrackets(pathToRegister)
 			shouldIgnoreTrailingSlash := ignoreTrailingSlashMap[path][method]
-			if !shouldIgnoreTrailingSlash {
+			if shouldIgnoreTrailingSlash {
 				actualPathToRegister = fmt.Sprintf("%s{%s:\\/?}", removeTrailingSlash(openapi.ConvertPathVariablesToBrackets(pathToRegister)), trailingSlashVariable)
 			}
 			router.HandleFunc(actualPathToRegister, rbacHandler).Methods(method)
