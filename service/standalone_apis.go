@@ -174,12 +174,12 @@ func grantHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	resourceType := mux.Vars(r)["resourceType"]
-	if resourceType != "" && reqBody.ResourceID != "" {
+	if resourceType != "" && reqBody.ResourceID == "" {
 		utils.FailResponseWithCode(w, http.StatusBadRequest, "missing resource id", utils.GENERIC_BUSINESS_ERROR_MESSAGE)
 		return
 	}
 
-	if len(reqBody.Groups) == 0 && len(reqBody.Permissions) == 0 && len(reqBody.Subjects) == 0 || len(reqBody.Roles) == 0 {
+	if len(reqBody.Groups) == 0 && len(reqBody.Permissions) == 0 && len(reqBody.Subjects) == 0 && len(reqBody.Roles) == 0 {
 		utils.FailResponseWithCode(w, http.StatusBadRequest, "missing body fields, one of groups, permissions, subjects or roles is required", utils.GENERIC_BUSINESS_ERROR_MESSAGE)
 		return
 	}
@@ -222,7 +222,7 @@ func grantHandler(w http.ResponseWriter, r *http.Request) {
 		"resourceType":           utils.SanitizeString(resourceType),
 	}).Debug("created bindings")
 
-	response := GrantResponseBody{BindingID: bindingIDCreated}
+	response := GrantResponseBody{BindingID: bindingToCreate.BindingID}
 
 	responseBytes, err := json.Marshal(response)
 	if err != nil {
