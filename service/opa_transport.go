@@ -93,9 +93,11 @@ func (t *OPATransport) RoundTrip(req *http.Request) (resp *http.Response, err er
 	if err != nil {
 		return nil, err
 	}
-	resp.Body.Close()
+	if err := resp.Body.Close(); err != nil {
+		return nil, err
+	}
 
-	if b == nil {
+	if len(b) == 0 {
 		return resp, nil
 	}
 
@@ -110,7 +112,7 @@ func (t *OPATransport) RoundTrip(req *http.Request) (resp *http.Response, err er
 		return nil, fmt.Errorf("%w: %s", ErrOPATransportInvalidResponseBody, err.Error())
 	}
 
-	pathParams := mux.Vars(req)
+	pathParams := mux.Vars(t.request)
 	input, err := rondhttp.NewInput(t.config, t.request, t.clientHeaderKey, pathParams, t.user, decodedBody)
 	if err != nil {
 		t.responseWithError(resp, err, http.StatusInternalServerError)
@@ -121,7 +123,7 @@ func (t *OPATransport) RoundTrip(req *http.Request) (resp *http.Response, err er
 		Logger: rondlogrus.NewEntry(t.logger),
 	})
 	if err != nil {
-		t.responseWithError(resp, err, http.StatusInternalServerError)
+		t.responseWithError(resp, err, http.StatusForbidden)
 		return resp, nil
 	}
 
