@@ -141,12 +141,15 @@ func (e evaluator) EvaluateResponsePolicy(ctx context.Context, rondInput core.In
 
 	opaEvaluatorOptions := e.evaluatorOptions.opaEvaluatorOptions(logger)
 
-	evaluator, err := e.partialResultEvaluators.GetEvaluatorFromPolicy(ctx, rondConfig.ResponseFlow.PolicyName, regoInput, opaEvaluatorOptions)
+	evaluator, err := e.partialResultEvaluators.GetEvaluatorFromPolicy(ctx, e.rondConfig.ResponseFlow.PolicyName, regoInput, opaEvaluatorOptions)
 	if err != nil {
 		return nil, err
 	}
 
 	bodyToProxy, err := evaluator.Evaluate(logger, e.policyEvaluationOptions)
+	if err != nil {
+		return nil, err
+	}
 
 	marshalledBody, err := json.Marshal(bodyToProxy)
 	if err != nil {
